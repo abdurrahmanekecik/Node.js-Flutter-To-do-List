@@ -1,11 +1,11 @@
-const TodoTask = require("./models/TodoTask");
-
 const express = require("express");
 const app = express();
+const TodoTask = require("./models/TodoTask");
+const ApiRouters = require('./api');
+app.use('/api', ApiRouters);
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-
 const dotenv = require("dotenv");
 dotenv.config();
 const mongoose = require("mongoose");
@@ -31,15 +31,13 @@ app.post('/', async (req, res) => {
     });
     try {
         await todoTask.save();
-        console.log("save.")
+        console.log("save.");
         res.redirect("/");
     }
     catch (err) {
         console.log(err);
     }
-
 });
-
 
 
 app.get('/edit/:id/', (req, res) => {
@@ -51,14 +49,13 @@ app.get('/edit/:id/', (req, res) => {
 });
 
 
-app.post('/edit/:id/',(req, res) => {
+app.post('/edit/:id/', (req, res) => {
     const id = req.params.id;
     TodoTask.findByIdAndUpdate(id, { content: req.body.content }, err => {
         if (err) return res.send(500, err);
         res.redirect("/");
     });
 });
-
 
 
 app.route("/remove/:id").get((req, res) => {
@@ -68,4 +65,3 @@ app.route("/remove/:id").get((req, res) => {
         res.redirect("/");
     });
 });
-
